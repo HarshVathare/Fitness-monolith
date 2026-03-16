@@ -64,8 +64,14 @@ public class RecommendationService {
         return response;
     }
 
-    public @Nullable List<RecommendationResponse> getRecommendationByUserId(String userId) {
+
+    public @Nullable List<Recommendation> getRecommendationByUserId(String userId) {
 
         return recommendationRepository.findByUserId(userId);
+    }
+
+    public @Nullable List<Recommendation> getRecommendationByActivity(String activity_id) {
+
+        return recommendationRepository.findByActivityId(activity_id);
     }
 }

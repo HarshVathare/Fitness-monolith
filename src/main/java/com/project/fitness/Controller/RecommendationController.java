@@ -2,6 +2,7 @@ package com.project.fitness.Controller;
 
 import com.project.fitness.DTO.RecommendationRequest;
 import com.project.fitness.DTO.RecommendationResponse;
+import com.project.fitness.Entity.Recommendation;
 import com.project.fitness.Service.RecommendationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +25,16 @@ public class RecommendationController {
     }
 
     @GetMapping("/user/{user_id}")
-    public ResponseEntity<List<RecommendationResponse>> getRecommendationByUserId(
+    public ResponseEntity<List<Recommendation>> getRecommendationByUserId(
             @PathVariable String user_id
     ){
         return ResponseEntity.ok(recommendationService.getRecommendationByUserId(user_id));
+    }
+
+    @GetMapping("/activity/{activity_id}")
+    public ResponseEntity<List<Recommendation>> getRecommendationByActivity(
+            @PathVariable String activity_id
+    ) {
+        return ResponseEntity.ok(recommendationService.getRecommendationByActivity(activity_id));
     }
 }

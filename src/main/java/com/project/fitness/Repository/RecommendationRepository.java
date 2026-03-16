@@ -10,5 +10,7 @@ import java.util.List;
 
 @Repository
 public interface RecommendationRepository extends JpaRepository<Recommendation, String> {
-    @Nullable List<RecommendationResponse> findByUserId(String userId);
+    @Nullable List<Recommendation> findByUserId(String userId);
+
+    @Nullable List<Recommendation> findByActivityId(String activityId);
 }
