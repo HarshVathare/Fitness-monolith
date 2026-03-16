@@ -2,9 +2,9 @@ package com.project.fitness.Controller;
 
 import com.project.fitness.DTO.RegisterRequest;
 import com.project.fitness.DTO.UserResponse;
-import com.project.fitness.Entity.User;
+
 import com.project.fitness.Service.UserService;
-import lombok.AllArgsConstructor;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
