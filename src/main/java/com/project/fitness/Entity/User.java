@@ -1,6 +1,7 @@
 package com.project.fitness.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.fitness.Entity.type.RoleType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,6 +29,9 @@ public class User {
     private String firstName;
 
     private String lastName;
+
+    @Enumerated(EnumType.STRING)
+    private RoleType roles = RoleType.USER;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

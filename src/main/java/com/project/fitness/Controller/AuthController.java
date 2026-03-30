@@ -1,5 +1,7 @@
 package com.project.fitness.Controller;
 
+import com.project.fitness.DTO.LoginRequest;
+import com.project.fitness.DTO.LoginResponse;
 import com.project.fitness.DTO.RegisterRequest;
 import com.project.fitness.DTO.UserResponse;
 
@@ -22,5 +24,10 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody RegisterRequest registerRequest) {
         return ResponseEntity.ok(userService.register(registerRequest));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(userService.login(loginRequest));
     }
 }

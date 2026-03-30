@@ -1,10 +1,21 @@
 package com.project.fitness.Service;
 
+import com.project.fitness.Config.JwtUtils;
+import com.project.fitness.DTO.LoginRequest;
+import com.project.fitness.DTO.LoginResponse;
 import com.project.fitness.DTO.RegisterRequest;
 import com.project.fitness.DTO.UserResponse;
 import com.project.fitness.Entity.User;
+import com.project.fitness.Entity.type.RoleType;
 import com.project.fitness.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,13 +24,20 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtUtils jwtUtils;
+
     public UserResponse register(RegisterRequest request) {
 
         User user = User.builder()
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
+                .roles(RoleType.USER)
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -33,12 +51,43 @@ public class UserService {
 
         response.setId(savedUser.getId());
         response.setEmail(savedUser.getEmail());
-        response.setPassword(savedUser.getPassword());
+        response.setPassword(passwordEncoder.encode(savedUser.getPassword()));
         response.setFirstName(savedUser.getFirstName());
         response.setLastName(savedUser.getLastName());
         response.setCreatedAt(savedUser.getCreatedAt());
         response.setUpdatedAt(savedUser.getUpdatedAt());
 
         return response;
+    }
+
+    public @Nullable LoginResponse login(LoginRequest loginRequest) {
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+            );
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            User user = (User) userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            String token = jwtUtils.generateToken(
+                    user.getId().toString(), // ✅ convert to String
+                    user.getRoles().name()
+            );
+
+            return new LoginResponse(
+                    token,
+                    user.getId().toString(),
+                    user.getEmail()
+            );
+
+        } catch (BadCredentialsException e) {
+            throw new IllegalArgumentException("Invalid email or password!");
+        }
     }
 }
