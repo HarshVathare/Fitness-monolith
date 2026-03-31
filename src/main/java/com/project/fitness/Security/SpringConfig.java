@@ -43,6 +43,10 @@ public class SpringConfig {
                         // Role-based endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                                ).permitAll()
                         // Any other request
                         .anyRequest().authenticated()
 
