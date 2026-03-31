@@ -1,6 +1,5 @@
-package com.project.fitness.Config;
+package com.project.fitness.Security;
 
-import com.project.fitness.Entity.User;
 import com.project.fitness.Repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,13 +18,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User user = (User) userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
-                .password(user.getPassword())
-                .roles(user.getRoles().name()) // e.g. USER
-                .build();
+        return userRepository.findByEmail(email).orElseThrow();
     }
 }

@@ -1,15 +1,11 @@
-package com.project.fitness.Config;
+package com.project.fitness.Security;
 
+import com.project.fitness.Entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import org.hibernate.mapping.List;
-import org.hibernate.sql.ast.tree.expression.Collation;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -32,10 +28,10 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateToken(String user_id, String role) {
+    public String generateToken(User user) {
         return Jwts.builder()
-                .setSubject(user_id)
-                .claim("roles", Collections.singletonList(role))
+                .setSubject(user.getId())
+                .claim("roles", Collections.singletonList(user.getRoles().name()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + JwtExpiration))
                 .signWith(getSecretKey())

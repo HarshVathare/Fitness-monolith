@@ -1,6 +1,6 @@
 package com.project.fitness.Service;
 
-import com.project.fitness.Config.JwtUtils;
+import com.project.fitness.Security.JwtUtils;
 import com.project.fitness.DTO.LoginRequest;
 import com.project.fitness.DTO.LoginResponse;
 import com.project.fitness.DTO.RegisterRequest;
@@ -11,10 +11,8 @@ import com.project.fitness.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,32 +60,51 @@ public class UserService {
 
     public @Nullable LoginResponse login(LoginRequest loginRequest) {
 
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword()
-                    )
-            );
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getEmail(),
+                        loginRequest.getPassword()
+                )
+        ); // check the Authenticate or not
 
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        //you need to convert user
+        User user = (User) authentication.getPrincipal();
 
-            User user = (User) userRepository.findByEmail(userDetails.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+        String token = jwtUtils.generateToken(user);
+        return new LoginResponse(token, user.getId(), user.getEmail());
 
-            String token = jwtUtils.generateToken(
-                    user.getId().toString(), // ✅ convert to String
-                    user.getRoles().name()
-            );
 
-            return new LoginResponse(
-                    token,
-                    user.getId().toString(),
-                    user.getEmail()
-            );
 
-        } catch (BadCredentialsException e) {
-            throw new IllegalArgumentException("Invalid email or password!");
-        }
+
+
+
+
+//        try {
+//            Authentication authentication = authenticationManager.authenticate(
+//                    new UsernamePasswordAuthenticationToken(
+//                            loginRequest.getEmail(),
+//                            loginRequest.getPassword()
+//                    )
+//            );
+//
+//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//
+//            User user = (User) userRepository.findByEmail(userDetails.getUsername())
+//                    .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//            String token = jwtUtils.generateToken(
+//                    user.getId().toString(), // ✅ convert to String
+//                    user.getRoles().name()
+//            );
+//
+//            return new LoginResponse(
+//                    token,
+//                    user.getId().toString(),
+//                    user.getEmail()
+//            );
+//
+//        } catch (BadCredentialsException e) {
+//            throw new IllegalArgumentException("Invalid email or password!");
+//        }
     }
 }
