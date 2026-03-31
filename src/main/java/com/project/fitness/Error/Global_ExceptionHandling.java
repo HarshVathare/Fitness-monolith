@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -52,5 +53,23 @@ public class Global_ExceptionHandling {
         Apierror apierror = new Apierror(LocalDateTime.now(), "An Unaccepted error occurred ..! "+ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         return new ResponseEntity<>(apierror, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // 6 Get message from validation
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Apierror> handleValidationException(MethodArgumentNotValidException ex) {
+
+        // Get first validation error message
+        String message = ex.getBindingResult()
+                .getFieldError()
+                .getDefaultMessage();
+
+        Apierror apierror = new Apierror(
+                LocalDateTime.now(),
+                message,
+                HttpStatus.BAD_REQUEST
+        );
+
+        return new ResponseEntity<>(apierror, HttpStatus.BAD_REQUEST);
     }
 }
