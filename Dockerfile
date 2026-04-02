@@ -1,13 +1,10 @@
-# Stage 1: Build (Java 21 - stable Maven image)
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Stage 2: Run (Java 25 - your requirement)
-FROM eclipse-temurin:25-jdk
-
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
 COPY --from=build /app/target/fitness-monolith-0.0.1-SNAPSHOT.jar app.jar
@@ -15,6 +12,25 @@ COPY --from=build /app/target/fitness-monolith-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
+
+# # Stage 1: Build (Java 21 - stable Maven image)
+# FROM maven:3.9.6-eclipse-temurin-21 AS build
+
+# WORKDIR /app
+# COPY . .
+# RUN mvn clean package -DskipTests
+
+# # Stage 2: Run (Java 25 - your requirement)
+# FROM eclipse-temurin:25-jdk
+
+# WORKDIR /app
+
+# COPY --from=build /app/target/fitness-monolith-0.0.1-SNAPSHOT.jar app.jar
+
+# EXPOSE 8080
+
+# ENTRYPOINT ["java", "-jar", "app.jar"]
 
 #FROM eclipse-temurin:25-jdk
 #
