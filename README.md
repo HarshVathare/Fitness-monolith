@@ -44,3 +44,9 @@
 ---
 
 ## 📂 Project Structure
+fitness-monolith/
+│── src/main/java/com/project/fitness
+│── src/main/resources
+│── Dockerfile
+│── docker-compose.yml
+│── pom.xml
