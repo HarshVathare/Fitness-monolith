@@ -50,3 +50,5 @@ fitness-monolith/
 │── Dockerfile
 │── docker-compose.yml
 │── pom.xml
+
+developed only for backend teckstack
